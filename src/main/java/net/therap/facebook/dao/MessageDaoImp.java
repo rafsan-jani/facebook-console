@@ -18,6 +18,7 @@ public class MessageDaoImp implements MessageDao {
     private final String OUTBOX = "SELECT * FROM message WHERE sender_id=? ORDER BY message_id DESC";
     private final String INBOX = "SELECT * FROM message WHERE receiver_id=? ORDER BY message_id DESC";
     private final String INSERT_MSG = "INSERT INTO message (sender_id,receiver_id,content) VALUES(?, ?, ?)";
+
     @Override
     public List<Message> getOutbox(UserInfo sender) {
         Connection connection = null;

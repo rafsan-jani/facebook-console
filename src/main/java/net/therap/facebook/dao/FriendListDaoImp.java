@@ -19,6 +19,7 @@ public class FriendListDaoImp implements FriendListDao {
     private final String CHECK_FRIENDSHIP = "SELECT * FROM friend_list WHERE user_id=? and friend_id=?";
     private final String MAKE_FRIENDSHIP = "INSERT INTO friend_list (user_id, friend_id) VALUES(?, ?)";
     private final String GET_FRIENDS = "SELECT * FROM personal_info WHERE user_id IN (SELECT user_id FROM friend_list WHERE friend_id=?)";
+
     @Override
     public List<UserInfo> getFriendList(int userId) {
         List<UserInfo> userInfos = null;

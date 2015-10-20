@@ -17,6 +17,7 @@ import java.util.List;
 public class CommentDaoImp implements CommentDao {
     private final String INSERT_COMMENT = "INSERT INTO comment (post_id,user_id,content,comment_time) VALUES(?, ?, ?, ?)";
     private final String GET_COMMENTS = "SELECT * FROM comment WHERE post_id= ? ORDER BY comment_time DESC";
+
     @Override
     public List<Comment> getAllComments(int postId) {
         List<Comment> comments = null;

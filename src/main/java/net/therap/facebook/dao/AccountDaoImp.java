@@ -13,7 +13,6 @@ import java.sql.SQLException;
  * since: 13/10/15.
  */
 public class AccountDaoImp implements AccountDao {
-
     private final String EMAIL_QUERY = "SELECT user_id FROM account WHERE email= ?";
     private final String GET_USER_INFO = "SELECT user_id FROM account WHERE email= ? and password = ?";
     private final String INSERT_USER_INFO = "INSERT INTO account (email,password) VALUES(?, ?)";

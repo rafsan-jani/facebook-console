@@ -20,6 +20,7 @@ public class PostDaoImp implements PostDao {
             "VALUES(?, ?, ?)";
     private final String GET_POSTS_BY_USER = "SELECT * FROM post WHERE user_id= ? ORDER BY post_time DESC";
     private final String GET_POSTS_BY_ID = "SELECT * FROM post WHERE post_id= ?";
+
     @Override
     public boolean insertIntoPost(Post post) {
         Connection connection = null;
