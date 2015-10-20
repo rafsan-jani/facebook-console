@@ -163,8 +163,8 @@ public class UserInterface {
 
     public static void showPostOptions() {
         System.out.println("Please select from the following options...");
-        System.out.println("1. Comments");
-        System.out.println("2. Likes");
+        System.out.println("1. Comment");
+        System.out.println("2. Like");
         System.out.println("0|[3-9]. Back");
     }
 

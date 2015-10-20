@@ -253,11 +253,6 @@ public class Account {
         UserInterface.showPosts(allPosts);
     }
 
-    private void showComments(int postId) {
-        UserInterface.showCommentOptions();
-
-    }
-
     private void updateProfile() {
         UserInfo newUserInfo = UserInput.getInstance().getUserInfo(this.getUserId());
         if (personalInfoServiceImp.updatePersonalDetails(newUserInfo)) {
