@@ -15,6 +15,10 @@ import java.util.List;
 
 public class FriendListDaoImp implements FriendListDao {
 
+    private final String GET_NOT_FRIENDS = "SELECT * FROM personal_info WHERE user_id NOT IN (SELECT user_id FROM friend_list WHERE friend_id=?)and user_id!=?";
+    private final String CHECK_FRIENDSHIP = "SELECT * FROM friend_list WHERE user_id=? and friend_id=?";
+    private final String MAKE_FRIENDSHIP = "INSERT INTO friend_list (user_id, friend_id) VALUES(?, ?)";
+    private final String GET_FRIENDS = "SELECT * FROM personal_info WHERE user_id IN (SELECT user_id FROM friend_list WHERE friend_id=?)";
     @Override
     public List<UserInfo> getFriendList(int userId) {
         List<UserInfo> userInfos = null;
@@ -22,10 +26,9 @@ public class FriendListDaoImp implements FriendListDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM personal_info WHERE user_id IN (SELECT user_id FROM friend_list WHERE friend_id=?)");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
-            userInfos = new ArrayList<UserInfo>();
+            preparedStatement = connection.prepareStatement(GET_FRIENDS);
+            userInfos = new ArrayList<>();
             preparedStatement.setInt(1, userId);
 
             resultSet = preparedStatement.executeQuery();
@@ -51,16 +54,14 @@ public class FriendListDaoImp implements FriendListDao {
 
     @Override
     public boolean makeFriend(int userId, int friendId) {
-        if (isFriend(userId, friendId) == false) {
+        if (!isFriend(userId, friendId)) {
             Connection connection = null;
             PreparedStatement preparedStatement = null;
             try {
-                StringBuffer sql = new StringBuffer("INSERT INTO friend_list (user_id, friend_id) " +
-                        "VALUES(?, ?)");
                 connection = ConnectionManager.getConnection();
                 connection.setAutoCommit(false);
 
-                preparedStatement = connection.prepareStatement(sql.toString());
+                preparedStatement = connection.prepareStatement(MAKE_FRIENDSHIP);
                 preparedStatement.setInt(1, userId);
                 preparedStatement.setInt(2, friendId);
 
@@ -98,9 +99,8 @@ public class FriendListDaoImp implements FriendListDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM friend_list WHERE user_id=? and friend_id=?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(CHECK_FRIENDSHIP);
 
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, friendId);
@@ -121,16 +121,15 @@ public class FriendListDaoImp implements FriendListDao {
 
     @Override
     public List<UserInfo> getNotYetFriendList(UserInfo userInfo) {
-        List<UserInfo> userInfos = null;
+        List<UserInfo> userInfos;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         int userId = userInfo.getUserId();
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM personal_info WHERE user_id NOT IN (SELECT user_id FROM friend_list WHERE friend_id=?)and user_id!=?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
-            userInfos = new ArrayList<UserInfo>();
+            preparedStatement = connection.prepareStatement(GET_NOT_FRIENDS);
+            userInfos = new ArrayList<>();
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, userId);
 

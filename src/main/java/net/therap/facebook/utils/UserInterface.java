@@ -73,10 +73,14 @@ public class UserInterface {
 
     }
 
+    private static void PrintDot() {
+        System.out.println("\n-------------------------------------------------------------------");
+    }
+
     private static void showLikes(List<UserInfo> likes) {
         System.out.println("Likes: (" + likes.size() + ")");
         for (UserInfo userInfo : likes) {
-            System.out.println("\n-------------------------------------------------------------------");
+            PrintDot();
             System.out.print("-->");
             showName(userInfo);
         }
@@ -86,7 +90,7 @@ public class UserInterface {
     private static void showComments(List<Comment> comments) {
         System.out.println("Comments: (" + comments.size() + ")");
         for (Comment comment : comments) {
-            System.out.println("\n-------------------------------------------------------------------");
+            PrintDot();
             System.out.print("\t@");
             showName(comment.getUserInfo());
             System.out.print("\t-->");
@@ -102,7 +106,7 @@ public class UserInterface {
         } else {
             int id = 1;
             for (UserInfo userInfo : friends) {
-                System.out.println("\n-------------------------------------------------------------------");
+                PrintDot();
                 System.out.println("User id: " + id);
                 showUserInfo(userInfo);
                 id++;
@@ -128,7 +132,7 @@ public class UserInterface {
 
         } else {
             for (Message message : messages) {
-                System.out.println("\n-------------------------------------------------------------------");
+                PrintDot();
                 if ("Outbox".equals(msg)) {
                     System.out.print("Receiver: ");
                     showName(message.getReceiver());
@@ -173,7 +177,7 @@ public class UserInterface {
     public static void showPosts(List<Post> posts) {
         int id = 1;
         for (Post post : posts) {
-            System.out.println("\n-------------------------------------------------------------------");
+            PrintDot();
             System.out.println("Post Id: " + id);
             showName(post.getUserInfo());
             showContent(post.getContent());

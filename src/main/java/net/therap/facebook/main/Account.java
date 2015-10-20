@@ -36,8 +36,8 @@ public class Account {
         this.email = email;
 
         userInfo = null;
-        friends = new ArrayList<UserInfo>();
-        allPosts = new ArrayList<Post>();
+        friends = new ArrayList<>();
+        allPosts = new ArrayList<>();
 
         personalInfoServiceImp = new PersonalInfoServiceImp();
         postServiceImp = new PostServiceImp();
@@ -87,8 +87,8 @@ public class Account {
 
     public void run() {
 
-        int option = 0;
-        int subOption = 0;
+        int option;
+        int subOption;
 
         loadUserInfo();
         String msg = "Welcome to Facebook ";
@@ -158,6 +158,7 @@ public class Account {
     private void addLike(int postId) {
 
         if (postServiceImp.updateLike(postId, this.getUserId())) {
+            UserInterface.success();
 
         } else {
             UserInterface.tryAgainMsg();

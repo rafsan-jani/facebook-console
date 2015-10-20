@@ -15,7 +15,9 @@ import java.util.List;
  * since: 13/10/15.
  */
 public class MessageDaoImp implements MessageDao {
-
+    private final String OUTBOX = "SELECT * FROM message WHERE sender_id=? ORDER BY message_id DESC";
+    private final String INBOX = "SELECT * FROM message WHERE receiver_id=? ORDER BY message_id DESC";
+    private final String INSERT_MSG = "INSERT INTO message (sender_id,receiver_id,content) VALUES(?, ?, ?)";
     @Override
     public List<Message> getOutbox(UserInfo sender) {
         Connection connection = null;
@@ -23,10 +25,9 @@ public class MessageDaoImp implements MessageDao {
         ResultSet resultSet = null;
         List<Message> messageList = null;
         try {
-            messageList = new ArrayList<Message>();
-            StringBuffer sql = new StringBuffer("SELECT * FROM message WHERE sender_id=? ORDER BY message_id DESC");
+            messageList = new ArrayList<>();
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(OUTBOX);
             preparedStatement.setInt(1, sender.getUserId());
 
             resultSet = preparedStatement.executeQuery();
@@ -56,10 +57,9 @@ public class MessageDaoImp implements MessageDao {
         ResultSet resultSet = null;
         List<Message> messageList = null;
         try {
-            messageList = new ArrayList<Message>();
-            StringBuffer sql = new StringBuffer("SELECT * FROM message WHERE receiver_id=? ORDER BY message_id DESC");
+            messageList = new ArrayList<>();
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INBOX);
             preparedStatement.setInt(1, receiver.getUserId());
 
             resultSet = preparedStatement.executeQuery();
@@ -87,13 +87,11 @@ public class MessageDaoImp implements MessageDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO message (sender_id,receiver_id,content) " +
-                    "VALUES(?, ?, ?)");
             connection = ConnectionManager.getConnection();
 
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INSERT_MSG);
             Clob clob = connection.createClob();
             clob.setString(1, message.getContent());
 

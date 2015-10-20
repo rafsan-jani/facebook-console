@@ -16,18 +16,19 @@ import java.util.List;
  */
 
 public class PostDaoImp implements PostDao {
+    private final String INSERT_POST = "INSERT INTO post (user_id,post_content,post_time) " +
+            "VALUES(?, ?, ?)";
+    private final String GET_POSTS_BY_USER = "SELECT * FROM post WHERE user_id= ? ORDER BY post_time DESC";
+    private final String GET_POSTS_BY_ID = "SELECT * FROM post WHERE post_id= ?";
     @Override
     public boolean insertIntoPost(Post post) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO post (user_id,post_content,post_time) " +
-                    "VALUES(?, ?, ?)");
-
             connection = ConnectionManager.getConnection();
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INSERT_POST);
 
             Clob clob = connection.createClob();
             clob.setString(1, post.getContent());
@@ -69,15 +70,13 @@ public class PostDaoImp implements PostDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM post WHERE user_id= ? " +
-                    "ORDER BY post_time DESC");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(GET_POSTS_BY_USER);
 
             preparedStatement.setInt(1, userInfo.getUserId());
             resultSet = preparedStatement.executeQuery();
 
-            posts = new ArrayList<Post>();
+            posts = new ArrayList<>();
             while (resultSet.next()) {
                 int postId = resultSet.getInt(1);
                 Clob clob = resultSet.getClob(3);
@@ -105,9 +104,8 @@ public class PostDaoImp implements PostDao {
         ResultSet resultSet = null;
         Post post = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM post WHERE post_id= ? ");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(GET_POSTS_BY_ID);
 
             preparedStatement.setInt(1, postId);
             resultSet = preparedStatement.executeQuery();

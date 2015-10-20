@@ -15,6 +15,12 @@ import java.util.Date;
  * since: 13/10/15.
  */
 public class PersonalInfoDaoImp implements PersonalInfoDao {
+    private final String GET_USER_INFO = "SELECT * FROM personal_info WHERE user_id=?";
+    private final String UPDT_USER_INFO = "UPDATE personal_info SET " +
+            "first_name=?, last_name=?,sex=?,date_of_birth=?,age=? WHERE user_id=?";
+    private final String INSERT_USER_INFO = "INSERT INTO " +
+            "personal_info (user_id, first_name,last_name,sex, date_of_birth,age) " +
+            "VALUES(?, ?, ?, ?, ?, ?)";
 
     @Override
     public UserInfo getPersonalInfo(int userId) {
@@ -22,16 +28,15 @@ public class PersonalInfoDaoImp implements PersonalInfoDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM personal_info WHERE user_id=?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(GET_USER_INFO);
             preparedStatement.setInt(1, userId);
             resultSet = preparedStatement.executeQuery();
 
             String firstName;
             String lastName;
             String sex;
-            Date dateOfBirth = null;
+            Date dateOfBirth;
             int age;
             if (resultSet.next()) {
                 firstName = resultSet.getString(2);
@@ -58,11 +63,8 @@ public class PersonalInfoDaoImp implements PersonalInfoDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("UPDATE personal_info SET " +
-                    "first_name=?, last_name=?,sex=?,date_of_birth=?,age=? " +
-                    "WHERE user_id=?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(UPDT_USER_INFO);
             preparedStatement.setString(1, userInfo.getFirstName());
             preparedStatement.setString(2, userInfo.getLastName());
             preparedStatement.setString(3, userInfo.getSex());
@@ -86,11 +88,9 @@ public class PersonalInfoDaoImp implements PersonalInfoDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO personal_info (user_id, first_name,last_name,sex, date_of_birth,age) " +
-                    "VALUES(?, ?, ?, ?, ?, ?)");
             connection = ConnectionManager.getConnection();
             connection.setAutoCommit(false);
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INSERT_USER_INFO);
 
             preparedStatement.setInt(1, userInfo.getUserId());
             preparedStatement.setString(2, userInfo.getFirstName());

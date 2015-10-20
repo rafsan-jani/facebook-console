@@ -14,7 +14,9 @@ import java.sql.SQLException;
  */
 public class AccountDaoImp implements AccountDao {
 
-    private static String EMAIL_QUERY = "SELECT user_id FROM account WHERE email= ?";
+    private final String EMAIL_QUERY = "SELECT user_id FROM account WHERE email= ?";
+    private final String GET_USER_INFO = "SELECT user_id FROM account WHERE email= ? and password = ?";
+    private final String INSERT_USER_INFO = "INSERT INTO account (email,password) VALUES(?, ?)";
 
     @Override
     public int getUserId(String email, String password) {
@@ -22,9 +24,8 @@ public class AccountDaoImp implements AccountDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT user_id FROM account WHERE email= ? and password = ?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(GET_USER_INFO);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
             resultSet = preparedStatement.executeQuery();
@@ -73,13 +74,11 @@ public class AccountDaoImp implements AccountDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO account (email,password) " +
-                    "VALUES(?, ?)");
             connection = ConnectionManager.getConnection();
 
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INSERT_USER_INFO);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
             preparedStatement.executeUpdate();

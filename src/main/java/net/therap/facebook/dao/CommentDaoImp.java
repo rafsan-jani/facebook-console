@@ -15,7 +15,8 @@ import java.util.List;
  * since: 13/10/15.
  */
 public class CommentDaoImp implements CommentDao {
-
+    private final String INSERT_COMMENT = "INSERT INTO comment (post_id,user_id,content,comment_time) VALUES(?, ?, ?, ?)";
+    private final String GET_COMMENTS = "SELECT * FROM comment WHERE post_id= ? ORDER BY comment_time DESC";
     @Override
     public List<Comment> getAllComments(int postId) {
         List<Comment> comments = null;
@@ -23,15 +24,13 @@ public class CommentDaoImp implements CommentDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM comment WHERE post_id= ? " +
-                    "ORDER BY comment_time DESC");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(GET_COMMENTS);
 
             preparedStatement.setInt(1, postId);
             resultSet = preparedStatement.executeQuery();
 
-            comments = new ArrayList<Comment>();
+            comments = new ArrayList<>();
             while (resultSet.next()) {
                 int commentId = resultSet.getInt(1);
                 int npostId = resultSet.getInt(2);
@@ -58,14 +57,13 @@ public class CommentDaoImp implements CommentDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO comment (post_id,user_id,content,comment_time) " +
-                    "VALUES(?, ?, ?, ?)");
+
 
             connection = ConnectionManager.getConnection();
 
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(INSERT_COMMENT);
             Clob clob = connection.createClob();
             clob.setString(1, comment.getContent());
 

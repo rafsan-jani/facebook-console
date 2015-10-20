@@ -18,18 +18,21 @@ import java.util.List;
 
 public class LikeDaoImp implements LikeDao {
 
+    private final String MAKE_LIKE = "INSERT INTO likes (post_id,user_id) VALUES(?, ?)";
+    private final String IS_LIKED = "SELECT * FROM likes WHERE post_id= ? and user_id = ?";
+    private final String GET_LIKES = "SELECT * FROM personal_info WHERE user_id IN (SELECT user_id FROM likes WHERE post_id=?)";
+    private final String DEL_LIKE = "DELETE FROM likes WHERE post_id=? and user_id=?";
+
     @Override
     public boolean insertIntoLike(int postId, int userId) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("INSERT INTO likes (post_id,user_id) " +
-                    "VALUES(?, ?)");
-
             connection = ConnectionManager.getConnection();
+
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(MAKE_LIKE);
 
             preparedStatement.setInt(1, postId);
             preparedStatement.setInt(2, userId);
@@ -65,12 +68,10 @@ public class LikeDaoImp implements LikeDao {
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM likes WHERE " +
-                    "post_id= ? and user_id = ?");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(IS_LIKED);
             preparedStatement.setInt(1, postId);
             preparedStatement.setInt(2, userId);
             resultSet = preparedStatement.executeQuery();
@@ -94,10 +95,9 @@ public class LikeDaoImp implements LikeDao {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            StringBuffer sql = new StringBuffer("SELECT * FROM personal_info WHERE user_id IN (SELECT user_id FROM likes WHERE post_id=?)");
             connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(sql.toString());
-            userInfos = new ArrayList<UserInfo>();
+            preparedStatement = connection.prepareStatement(GET_LIKES);
+            userInfos = new ArrayList<>();
 
             preparedStatement.setInt(1, postId);
 
@@ -127,12 +127,10 @@ public class LikeDaoImp implements LikeDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            StringBuffer sql = new StringBuffer("DELETE FROM likes WHERE post_id=? and user_id=?");
-
             connection = ConnectionManager.getConnection();
             connection.setAutoCommit(false);
 
-            preparedStatement = connection.prepareStatement(sql.toString());
+            preparedStatement = connection.prepareStatement(DEL_LIKE);
 
             preparedStatement.setInt(1, postId);
             preparedStatement.setInt(2, userId);
